@@ -91,6 +91,12 @@ lazy val openie = project
   .settings(commonSettings: _*)
   .dependsOn(main % "test->test;compile->compile", odin)
 
+lazy val allenai = project
+  .settings(commonSettings: _*)
+  .dependsOn(corenlp % "test->test;compile->compile", modelsmain)
+  .enablePlugins(JavaAppPackaging)
+
+
 // release steps
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
