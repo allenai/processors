@@ -69,7 +69,7 @@ class ShallowNLPProcessor(val tokenizerPostProcessor:Option[TokenizerStep],
 
   def mkNer: StanfordCoreNLP = {
     val props = new Properties()
-    props.put("annotators", "ner")
+    props.put("annotators", "tokenize,ssplit,pos,ner")
     newStanfordCoreNLP(props, enforceRequirements = false)
   }
 
