@@ -54,6 +54,8 @@ object JSONSerializer {
     s
   }
 
+  // todo implement toCorefMentions
+
   private def getStringOption(json: JValue, key: String): Option[String] = json \ key match {
     case JString(s) => Some(s)
     case _ => None

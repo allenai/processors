@@ -1,7 +1,7 @@
 package org.clulab.serialization
 
 import org.clulab.processors.{Document, Sentence}
-import org.clulab.struct.{DirectedGraph, Edge, GraphMap}
+import org.clulab.struct._
 import org.json4s._
 import org.json4s.JsonDSL._
 import org.json4s.jackson._
@@ -58,7 +58,8 @@ package object json {
       // field and value are removed when value is not present
       ("id" -> doc.id) ~
       ("text" -> doc.text) ~
-      ("sentences" -> doc.sentences.map(_.jsonAST).toList)
+      ("sentences" -> doc.sentences.map(_.jsonAST).toList) ~
+      ("corefChains" -> doc.coreferenceChains.toSerializableJSON)
       // TODO: handle discourse tree
       //("discourse-tree" -> discourseTree)
     }
@@ -84,5 +85,30 @@ package object json {
     }
 
   }
+
+  implicit class OCorefChainsOps(occ: Option[CorefChains]) {
+    def toSerializableJSON: Option[JValue] = occ match {
+      case Some(cc) => Some(cc.jsonAST)
+      case None => None
+    }
+  }
+
+  implicit class CorefChainsOps(cc: CorefChains) extends JSONSerialization {
+    def jsonAST: JValue = {
+      ("rawMentions" -> cc.rawMentions.map(_.jsonAST))
+    }
+  }
+
+  implicit class CorefMentionOps(cm: CorefMention) extends JSONSerialization {
+    def jsonAST: JValue = {
+      ("sentenceIndex" -> cm.sentenceIndex) ~
+        ("headIndex" -> cm.headIndex) ~
+        ("startOffset" -> cm.startOffset) ~
+        ("endOffset" -> cm.endOffset) ~
+        ("chainId" -> cm.chainId)
+    }
+  }
+
+
 
 }
