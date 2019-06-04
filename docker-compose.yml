@@ -1,0 +1,13 @@
+version: '3'
+services:
+  corenlp:
+    build: .
+    networks:
+      - corenlpnet
+    restart: always
+    ports:
+      - "9090:9090"
+    container_name: corenlp
+
+networks:
+  corenlpnet:
