@@ -8,6 +8,8 @@ services:
     ports:
       - "9090:9090"
     container_name: corenlp
+    environment:
+      - JAVA_OPTS=-Xmx4g -Xms4g 
 
 networks:
   corenlpnet:
