@@ -71,8 +71,9 @@ class CoreNLPProcessor(
     g
   }
 
-  def mkCoref: StanfordCoreNLP = {
+  def  mkCoref: StanfordCoreNLP = {
     val props = new Properties()
+    props.put("dcoref.maxdist", "100")
     props.put("annotators", "dcoref")
     new StanfordCoreNLP(props, false)
   }
