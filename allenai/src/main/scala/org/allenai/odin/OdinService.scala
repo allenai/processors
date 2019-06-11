@@ -14,6 +14,7 @@ import org.clulab.serialization.json._
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 import org.clulab.processors.corenlp.CoreNLPProcessor
+import scala.concurrent.duration._
 
 object OdinService extends App {
   implicit val system: ActorSystem = ActorSystem("odin-wrapper")
@@ -45,10 +46,12 @@ object OdinService extends App {
 
     post {
       path("annotate-text") {
-        entity(as[TextDocument]) { doc =>
-          // annotate the document using the default linguistic annotation pipeline.
-          val annotatedDoc = proc.annotate(doc.text, keepText=true)
-          complete(HttpEntity(ContentTypes.`application/json`, annotatedDoc.json()));
+        withRequestTimeout(600.seconds) {
+          entity(as[TextDocument]) { doc =>
+            // annotate the document using the default linguistic annotation pipeline.
+            val annotatedDoc = proc.annotate(doc.text, keepText = true)
+            complete(HttpEntity(ContentTypes.`application/json`, annotatedDoc.json()));
+          }
         }
       }
 
@@ -61,10 +64,12 @@ object OdinService extends App {
 
     post {
       path("annotate-tokens") {
-        entity(as[TokenizedDocument]) { doc =>
-          // annotate the document using the default linguistic annotation pipeline.
-          val annotatedDoc = proc.annotateFromTokens(doc.tokens, keepText=true)
-          complete(HttpEntity(ContentTypes.`application/json`, annotatedDoc.json()));
+        withRequestTimeout(600.seconds) {
+          entity(as[TokenizedDocument]) { doc =>
+            // annotate the document using the default linguistic annotation pipeline.
+            val annotatedDoc = proc.annotateFromTokens(doc.tokens, keepText = true)
+            complete(HttpEntity(ContentTypes.`application/json`, annotatedDoc.json()));
+          }
         }
       }
 
