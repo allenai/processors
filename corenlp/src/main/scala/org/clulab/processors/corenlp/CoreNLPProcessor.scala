@@ -74,6 +74,10 @@ class CoreNLPProcessor(
   def  mkCoref: StanfordCoreNLP = {
     val props = new Properties()
     props.put("dcoref.maxdist", "100")
+
+    // When dcoref can't find a syntactic head it tries to reparse which causes a
+    // model load since there is no parser in the pipeline. We disallow it.
+    props.put("dcoref.allowReparsing", "false")
     props.put("annotators", "dcoref")
     new StanfordCoreNLP(props, false)
   }
