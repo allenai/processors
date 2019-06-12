@@ -69,7 +69,7 @@ class ShallowNLPProcessor(val tokenizerPostProcessor:Option[TokenizerStep],
 
   def mkNer: StanfordCoreNLP = {
     val props = new Properties()
-    props.put("annotators", "tokenize,ssplit,pos,ner")
+    props.put("annotators", "ner")
     newStanfordCoreNLP(props, enforceRequirements = false)
   }
 
@@ -293,7 +293,9 @@ object ShallowNLPProcessor {
     assert(doc.text.nonEmpty)
     val docAnnotation = new Annotation(doc.text.get)
     val sentencesAnnotation = new util.ArrayList[CoreMap]()
+    val tokensAnnotation = new util.ArrayList[CoreLabel]()
     docAnnotation.set(classOf[SentencesAnnotation], sentencesAnnotation.asInstanceOf[java.util.List[CoreMap]])
+    docAnnotation.set(classOf[TokensAnnotation], tokensAnnotation.asInstanceOf[java.util.List[CoreLabel]])
 
     var sentOffset = 0
     var tokenOffset = 0
@@ -311,6 +313,7 @@ object ShallowNLPProcessor {
         crtTok.setIndex(tokOffset + 1) // Stanford counts tokens starting from 1
         crtTok.setSentIndex(sentOffset) // Stanford counts sentences starting from 0...
         crtTokens.add(crtTok)
+        tokensAnnotation.add(crtTok)
         tokOffset += 1
       }
 
