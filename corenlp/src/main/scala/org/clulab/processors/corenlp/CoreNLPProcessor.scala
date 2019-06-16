@@ -96,20 +96,22 @@ class CoreNLPProcessor(
       // store Stanford annotations; Stanford dependencies are created here!
       // note: this code breaks on sentences with 1 token
       val words = sa.get(classOf[CoreAnnotations.TokensAnnotation])
-      var annotationsSet = false
       if(words.size() > 1) {
         try {
           ParserAnnotatorUtils.fillInParseAnnotations(false, true, gsf, sa,
             util.Arrays.asList(stanfordTree), GrammaticalStructure.Extras.NONE)
-          annotationsSet = true
         } catch {
           case e: Exception =>
-            System.err.println("WARNING: Filling in pare annotations failed. Possibly due to no roots in sentence" +
-              "Will ignore and continue: " + edu.stanford.nlp.ling.SentenceUtils.listToString(words, true))
+            System.err.println("WARNING: Filling in parse annotations failed. Possibly due to no roots in sentence. " +
+              "Will try again with fake tree: " + edu.stanford.nlp.ling.SentenceUtils.listToString(words, true))
+
+            val xTree = ParserUtils.xTree(words)
+            ParserAnnotatorUtils.fillInParseAnnotations(false, true, gsf, sa,
+              util.Arrays.asList(xTree), GrammaticalStructure.Extras.NONE)
+
         }
 
-      }
-      if (!annotationsSet) { // exactly 1 token in the sentence or filling in parse annotations failed
+      } else { // exactly 1 token in the sentence
         // save the constituent tree
           sa.set(classOf[TreeCoreAnnotations.TreeAnnotation], stanfordTree)
 
