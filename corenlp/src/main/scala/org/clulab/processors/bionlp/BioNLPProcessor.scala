@@ -23,12 +23,13 @@ class BioNLPProcessor (internStrings:Boolean = false,
                        withContext:Boolean = true,
                        withDiscourse:Int = ShallowNLPProcessor.NO_DISCOURSE,
                        maxSentenceLength:Int = 100,
+                       corefSentMaxDistance:Int = 5,
                        removeFigTabReferences:Boolean = true,
                        removeBibReferences:Boolean = true
 )
   extends CoreNLPProcessor(
     Some(new BioTokenizerPostProcessor(KBLoader.UNSLASHABLE_TOKENS_KBS)),
-    internStrings, withChunks, withRelationExtraction = false, withDiscourse, maxSentenceLength) {
+    internStrings, withChunks, withRelationExtraction = false, withDiscourse, maxSentenceLength, corefSentMaxDistance) {
 
   //lazy val banner = new BannerWrapper
   private lazy val hybridNER = new HybridNER(withCRFNER, withRuleNER)

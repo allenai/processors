@@ -75,6 +75,7 @@ class ProcessorServer (
     val prefix = "server.processor"
     val internStrings = getArgBoolean(s"${prefix}.internStrings", true)
     val maxSentenceLength = getArgInt(s"${prefix}.maxSentenceLength", 100)
+    val corefMaxSentnenceDistance = getArgInt(s"${prefix}.corefMaxSentenceDistannce", 5)
     val removeFigTabReferences = getArgBoolean(s"${prefix}.removeFigTabReferences", true)
     val removeBibReferences = getArgBoolean(s"${prefix}.removeBibReferences", true)
     val withChunks = getArgBoolean(s"${prefix}.withChunks", true)
@@ -101,10 +102,11 @@ class ProcessorServer (
                                         withContext,
                                         withDiscourse,
                                         maxSentenceLength,
+                                        corefMaxSentnenceDistance,
                                         removeFigTabReferences,
                                         removeBibReferences)
 
-      case "core" => new CoreNLPProcessor(None, internStrings, withChunks, withRelationExtraction, withDiscourse, maxSentenceLength)
+      case "core" => new CoreNLPProcessor(None, internStrings, withChunks, withRelationExtraction, withDiscourse, maxSentenceLength, corefMaxSentnenceDistance)
 
       case "fast" => new FastNLPProcessor(None, internStrings, withChunks, withRelationExtraction, withDiscourse)
 

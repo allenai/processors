@@ -1,6 +1,7 @@
 package org.allenai.odin
 
 import java.io.File
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
@@ -10,6 +11,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json._
 import DefaultJsonProtocol._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import org.clulab.serialization.json._
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
@@ -28,7 +30,11 @@ object OdinService extends App {
   implicit val TextDocumentFormat: RootJsonFormat[TextDocument] = jsonFormat1(TextDocument)
   implicit val TokenizedDocumentFormat: RootJsonFormat[TokenizedDocument] = jsonFormat1(TokenizedDocument)
 
-  val proc = new CoreNLPProcessor
+
+  val sConfig = ConfigFactory.load().getConfig("OdinService")
+  val corefMaxSentDist = sConfig.getInt("coref.maxSentDistance")
+  println(s"coref.maxSentDistance ${corefMaxSentDist}")
+  val proc = new CoreNLPProcessor(corefMaxSentDistance=corefMaxSentDist)
 
   val host = "0.0.0.0"
   var port = if (args.length > 0) args(0).toInt else 9090

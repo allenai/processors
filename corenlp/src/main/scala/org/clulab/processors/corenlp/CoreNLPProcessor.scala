@@ -38,14 +38,16 @@ class CoreNLPProcessor(
   withChunks:Boolean,
   withRelationExtraction:Boolean,
   val withDiscourse:Int,
-  val maxSentenceLength:Int) extends ShallowNLPProcessor(tokenizerPostProcessor, internStrings, withChunks, withRelationExtraction) with OpenIEAnnotator {
+  val maxSentenceLength:Int,
+  val corefMaxSentDistance:Int) extends ShallowNLPProcessor(tokenizerPostProcessor, internStrings, withChunks, withRelationExtraction) with OpenIEAnnotator {
 
   def this(internStrings:Boolean = true,
            withChunks:Boolean = true,
            withRelationExtraction:Boolean = false,
            withDiscourse:Int = ShallowNLPProcessor.NO_DISCOURSE,
-           maxSentenceLength:Int = 100) {
-    this(None, internStrings, withChunks, withRelationExtraction, withDiscourse, maxSentenceLength)
+           maxSentenceLength:Int = 100,
+           corefMaxSentDistance:Int = 5) {
+    this(None, internStrings, withChunks, withRelationExtraction, withDiscourse, maxSentenceLength, corefMaxSentDistance)
   }
 
   lazy val coref: StanfordCoreNLP = mkCoref
@@ -73,7 +75,7 @@ class CoreNLPProcessor(
 
   def  mkCoref: StanfordCoreNLP = {
     val props = new Properties()
-    props.put("dcoref.maxdist", "100")
+    props.put("dcoref.maxdist", this.corefMaxSentDistance.toString)
 
     // When dcoref can't find a syntactic head it tries to reparse which causes a
     // model load since there is no parser in the pipeline. We disallow it.
