@@ -9,6 +9,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json._
+import akka.http.scaladsl.model.StatusCodes._
 import DefaultJsonProtocol._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
