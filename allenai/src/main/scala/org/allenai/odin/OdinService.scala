@@ -81,7 +81,26 @@ object OdinService extends App {
 
     }
 
-  val bindingFuture = Http().bindAndHandle(annotateTextRoute ~ annotateTokensRoute, host, port)
+  val healthRoute =
+    get {
+      path("health") {
+        complete(OK)
+      }
+    }
+
+  val infoRoute =
+    get {
+      path("info") {
+        val infoResponseString = if (System.getenv().containsKey("GIT_SHA")) {
+          val git_sha = System.getenv("GIT_SHA")
+          "{\"sha\":\"" + git_sha + "\"}"
+        } else "{}"
+
+        complete(HttpEntity(ContentTypes.`application/json`, infoResponseString))
+      }
+    }
+
+  val bindingFuture = Http().bindAndHandle(annotateTextRoute ~ annotateTokensRoute ~ healthRoute ~ infoRoute, host, port)
 
   bindingFuture.onComplete {
     case Success(serverBinding) => println(s"listening to ${serverBinding.localAddress}")
